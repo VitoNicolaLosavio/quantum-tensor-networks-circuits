@@ -91,6 +91,34 @@ def TTN(num_qubits, cut_last_layer=False, reps=1, rotation_blocks='ry'):
 
     return qc
 
+def MERA(num_qubits, reps=1, rotation_blocks='ry'):
+    assert num_qubits == 6, "Number of qubits must be 6 for use this implementation"
+
+    qc = QuantumCircuit(num_qubits)
+
+    # split organized by layers
+    layers_couples = [[(1,2), (3,4)], [(0,1), (2, 3), (5, 4)], [(4, 1)], [(2,1), (3, 4)], [(1, 4)]]
+
+    for idx, layer in enumerate(layers_couples):
+        for i, j in layer:
+            qc.compose(
+                TwoLocal(
+                    2,
+                    rotation_blocks=rotation_blocks,
+                    entanglement='reverse_linear',
+                    entanglement_blocks='cx',
+                    parameter_prefix=f'λ_layer_{idx}_{i},{j}',
+                    insert_barriers=True,
+                    reps=reps
+                ),
+                [i, j],
+                inplace=True
+            )
+        qc.barrier()
+
+    return qc
+
+
 def CMPS(n):
     qubits = list(range(n))
     ansatz = QuantumCircuit(n)
