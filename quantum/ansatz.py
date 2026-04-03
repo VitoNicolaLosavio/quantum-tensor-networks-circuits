@@ -85,7 +85,6 @@ def TTN(num_qubits, cut_last_layer=False, reps=1, rotation_blocks='ry'):
                     reps=reps
                 ), [i, j],
                 inplace=True)
-            qc.barrier()
 
         qc.barrier()
 

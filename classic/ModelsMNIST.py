@@ -54,11 +54,19 @@ def generate_triplets(labels):
 
 
 # Training
-def train_triplet_autoencoder(model, X, y, n_epochs=100, batch_size=32, lr=1e-3, margin=1.0, alpha=0.5):
+def train_triplet_autoencoder(
+        model, X, y,
+        n_epochs=100,
+        batch_size=32,
+        lr=1e-3,
+        weight_decay=1e-5,
+        margin=1.0,
+        alpha=0.5
+):
     model.to(device)
     criterion_recon = nn.MSELoss()
     criterion_triplet = nn.TripletMarginLoss(margin=margin)
-    optimizer = optim.Adam(model.parameters(), lr=lr)
+    optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
 
     X_tensor = torch.tensor(X, dtype=torch.float32)
     y_tensor = torch.tensor(y, dtype=torch.long)
